@@ -562,23 +562,6 @@ function generateText() {
   updateCreateButton();
 
 </script>
-function checkPartOfSpeech(part) {
-  if (!(part in dictionary)) {
-    console.error(`Ошибка: для части речи "${part}" нет данных в словаре.`);
-    return false;
-  }
-  console.log(`Часть речи "${part}" найдена в словаре, слов: ${dictionary[part].length}`);
-  return true;
-}
-
-// Пример использования
-const selectedPart = "Точка"; // или "Глагол", или любое значение из PARTS_OF_SPEECH
-
-if (!checkPartOfSpeech(selectedPart)) {
-  alert(`Не могу показать слова для части речи: "${selectedPart}". Проверь словарь.`);
-} else {
-  // Здесь код, который показывает слова для выбранной части речи
-}
 
 </body>
 </html>
