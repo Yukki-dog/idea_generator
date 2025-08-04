@@ -391,6 +391,27 @@ function generateText() {
   outputDiv.textContent = text.trim();
 }
 
+function generateText() {
+  let text = "";
+  selectedBoxes.forEach(pos => {
+    if (punctuation[pos]) {
+      text = text.trimEnd() + punctuation[pos] + " ";
+    } else {
+      const words = dictionary[pos];
+      if (!words) {
+        console.warn(`Нет слов для части речи "${pos}"`);
+        return;
+      }
+      if (words.length === 0) {
+        console.warn(`Словарь для части речи "${pos}" пуст`);
+        return;
+      }
+      const randWord = words[Math.floor(Math.random() * words.length)];
+      text += randWord + " ";
+    }
+  });
+  outputDiv.textContent = text.trim();
+}
 
   // Инициализация интерфейса
   renderAddPanel();
