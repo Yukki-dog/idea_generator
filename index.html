@@ -376,6 +376,22 @@
 
   createBtn.onclick = generateText;
 
+function generateText() {
+  let text = "";
+  selectedBoxes.forEach(pos => {
+    if (punctuation[pos]) {
+      text = text.trimEnd() + punctuation[pos] + " ";
+    } else {
+      const words = dictionary[pos];
+      if (!words || words.length === 0) return;
+      const randWord = words[Math.floor(Math.random() * words.length)];
+      text += randWord + " ";
+    }
+  });
+  outputDiv.textContent = text.trim();
+}
+
+
   // Инициализация интерфейса
   renderAddPanel();
   updateCreateButton();
