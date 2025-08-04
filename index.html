@@ -3,38 +3,383 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Тест кнопки переключения</title>
+<title>Генератор историй и идей</title>
 <style>
-  #addPanel {
-    display: none;
-    padding: 20px;
-    margin-top: 10px;
-    background: #eee;
-    border: 1px solid #ccc;
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(120deg, #fffefc, #f9f9f6 40%, #fffde7 90%);
+    color: #444;
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container {
+    max-width: 720px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow:
+      0 4px 12px rgba(0,0,0,0.05),
+      inset 0 0 10px #f0f0f0;
+    padding: 30px 25px;
+  }
+  h1 {
+    font-weight: 700;
+    font-size: 28px;
+    color: #666;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .warning {
+    background: #fff8e1;
+    border: 1.5px solid #ffecb3;
+    border-radius: 12px;
+    color: #a67c00;
+    font-weight: 600;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    font-size: 15px;
+    line-height: 1.3;
+    text-align: center;
+  }
+  button {
+    display: block;
+    background: #f4f6f9;
+    border: 1.5px solid #d8d8d8;
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-weight: 600;
+    font-size: 15px;
+    color: #555;
+    cursor: pointer;
+    margin: 0 auto 20px auto;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    width: fit-content;
+  }
+  button:hover:not(:disabled) {
+    background: #e6eaf4;
+    box-shadow: 0 0 12px rgba(102,122,182,0.25);
+  }
+  button:disabled {
+    opacity: 0.5;
+    cursor: default;
+    box-shadow: none;
+  }
+  .boxes-add-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+  .box {
+    min-width: 110px;
+    padding: 10px 18px;
+    background: #fefefe;
+    border-radius: 14px;
+    box-shadow:
+      0 4px 6px rgba(0,0,0,0.07),
+      inset 0 1px 0 rgba(255,255,255,0.9);
+    font-weight: 600;
+    font-size: 15px;
+    text-align: center;
+    color: #5a5a5a;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-shrink: 0;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .box:hover {
+    box-shadow:
+      0 6px 14px rgba(0,0,0,0.12),
+      inset 0 1px 0 rgba(255,255,255,1);
+    background: #f9fbff;
+    color: #3b4cff;
+  }
+  .selected-boxes {
+    display: flex;
+    gap: 12px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    margin-bottom: 30px;
+  }
+  .selected-box {
+    min-width: 110px;
+    background: #f0f3ff;
+    border-radius: 14px;
+    box-shadow:
+      0 5px 8px rgba(51, 66, 224, 0.2),
+      inset 0 2px 8px rgba(235, 238, 255, 0.9);
+    color: #2e3bb1;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .arrow-btn {
+    border: none;
+    background: #d4d8ff;
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    font-size: 17px;
+    line-height: 1;
+    font-weight: 700;
+    color: #4a54a1;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.25s ease;
+    margin-left: 8px;
+  }
+  .arrow-btn:disabled {
+    background: #f0f2fc;
+    color: #a5a9c7;
+    cursor: default;
+  }
+  .arrow-btn:hover:not(:disabled) {
+    background: #b6c1ff;
+    color: #28307f;
+  }
+  .generated-text {
+    margin-top: 30px;
+    min-height: 100px;
+    background: #fefefe;
+    border-radius: 16px;
+    padding: 18px 24px;
+    box-shadow: inset 0 1px 6px #e6e9ff;
+    font-weight: 600;
+    font-size: 17px;
+    color: #3a3a66;
+    white-space: pre-wrap;
+    user-select: text;
+  }
+  @media (max-width: 600px) {
+    .box {
+      min-width: 90px;
+      font-size: 14px;
+      padding: 8px 14px;
+    }
+    .selected-box {
+      min-width: 90px;
+      font-size: 14px;
+      padding: 10px 12px;
+    }
+    .arrow-btn {
+      width: 22px;
+      height: 22px;
+      font-size: 15px;
+      margin-left: 6px;
+    }
   }
 </style>
 </head>
 <body>
 
-<button id="toggleBtn">Показать панель +</button>
+<div class="container" role="main" aria-label="Генератор историй и идей">
+  <h1>Генератор историй и идей ❤</h1>
 
-<div id="addPanel">
-  Здесь содержимое панели.
+  <div class="warning" role="alert" aria-live="polite">
+    ⚠️ Внимание! Получившийся текст может быть очень странным и смешным. Лучше не пить и не есть пока читаешь — может в горле от смеха застрять 😆
+  </div>
+
+  <button id="toggleBtn" aria-expanded="false" aria-controls="addPanel" aria-haspopup="true">Показать части речи +</button>
+
+  <div id="addPanel" class="boxes-add-panel" style="display:none;" aria-label="Доступные части речи для добавления" role="region" aria-live="polite">
+    <!-- Кнопки частей речи будут сюда динамически -->
+  </div>
+
+  <div id="selectedBoxes" class="selected-boxes" aria-label="Выбранные части речи для генерации текста">
+    <!-- Выбранные части речи -->
+  </div>
+
+  <button id="createBtn" disabled aria-disabled="true">Создать случайный текст</button>
+
+  <div id="output" class="generated-text" aria-live="polite" aria-label="Сгенерированный случайный текст"></div>
 </div>
 
 <script>
-  const toggleBtn = document.getElementById('toggleBtn');
-  const addPanel = document.getElementById('addPanel');
+  // Список частей речи, которые можно выбрать
+  const PARTS_OF_SPEECH = [
+    "Глагол",
+    "Прилагательное",
+    "Существительное",
+    "Наречие",
+    "Местоимение",
+    "Числительное",
+    "Союз",
+    "Частица",
+    "Междометие",
+    "Причастие",
+    "Деепричастие",
+    "Точка",
+    "Запятая",
+    "Восклицательный знак",
+  ];
 
-  toggleBtn.addEventListener('click', () => {
-    if (addPanel.style.display === 'block') {
-      addPanel.style.display = 'none';
-      toggleBtn.textContent = 'Показать панель +';
-    } else {
-      addPanel.style.display = 'block';
-      toggleBtn.textContent = 'Скрыть панель –';
+  // Словари — вставляй свои слова ниже в эти переменные:
+  const verbs = [ /* *ВСТАВЬ СЮДА СЛОВАРЬ* */ ];
+  const adjectives = [ /* *ВСТАВЬ СЮДА СЛОВАРЬ* */ ];
+  const nouns = [ /* *ВСТАВЬ СЮДА СЛОВАРЬ* */ ];
+  const adverbs = [ /* *ВСТАВЬ СЮДА СЛОВАРЬ* */ ];
+  const pronouns = [ /* *ВСТАВЬ СЮДА СЛОВАРЬ* */ ];
+  const numerals = [ /* *ВСТАВЬ СЮДА СЛОВАРЬ* */ ];
+  const conjunctions = [ /* *ВСТАВЬ СЮДА СЛОВАРЬ* */ ];
+  const particles = [ /* *ВСТАВЬ СЮДА СЛОВАРЬ* */ ];
+  const interjections = [ /* *ВСТАВЬ СЮДА СЛОВАРЬ* */ ];
+  const participles = [ /* *ВСТАВЬ СЮДА СЛОВАРЬ* */ ];
+  const gerunds = [ /* *ВСТАВЬ СЮДА СЛОВАРЬ* */ ];
+
+  // Знаки препинания
+  const punctuation = {
+    "Точка": ".",
+    "Запятая": ",",
+    "Восклицательный знак": "!",
+  };
+
+  // Объект для быстрого доступа к словарям по части речи
+  const dictionary = {
+    "Глагол": verbs,
+    "Прилагательное": adjectives,
+    "Существительное": nouns,
+    "Наречие": adverbs,
+    "Местоимение": pronouns,
+    "Числительное": numerals,
+    "Союз": conjunctions,
+    "Частица": particles,
+    "Междометие": interjections,
+    "Причастие": participles,
+    "Деепричастие": gerunds,
+  };
+
+  const toggleBtn = document.getElementById("toggleBtn");
+  const addPanel = document.getElementById("addPanel");
+  const selectedBoxesDiv = document.getElementById("selectedBoxes");
+  const createBtn = document.getElementById("createBtn");
+  const outputDiv = document.getElementById("output");
+
+  // Массив выбранных частей речи в порядке, который задаёт пользователь
+  let selectedBoxes = [];
+
+  // Отрисовка кнопок для выбора частей речи
+  function renderAddPanel() {
+    addPanel.innerHTML = "";
+    PARTS_OF_SPEECH.forEach(part => {
+      const btn = document.createElement("div");
+      btn.className = "box";
+      btn.tabIndex = 0;
+      btn.textContent = part;
+      btn.title = `Добавить "${part}" в порядок генерации`;
+      btn.onclick = () => addBox(part);
+      btn.onkeydown = (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          addBox(part);
+          e.preventDefault();
+        }
+      };
+      addPanel.appendChild(btn);
+    });
+  }
+
+  // Добавляем выбранную часть речи в список
+  function addBox(box) {
+    selectedBoxes.push(box);
+    renderSelectedBoxes();
+    updateCreateButton();
+  }
+
+  // Отрисовка выбранных частей речи с кнопками для перестановки
+  function renderSelectedBoxes() {
+    selectedBoxesDiv.innerHTML = "";
+    selectedBoxes.forEach((box, i) => {
+      const div = document.createElement("div");
+      div.className = "selected-box";
+      div.textContent = box;
+
+      const arrowsDiv = document.createElement("div");
+
+      const leftBtn = document.createElement("button");
+      leftBtn.className = "arrow-btn";
+      leftBtn.textContent = "←";
+      leftBtn.title = `Переместить "${box}" влево`;
+      leftBtn.disabled = i === 0;
+      leftBtn.onclick = () => moveBox(i, "left");
+
+      const rightBtn = document.createElement("button");
+      rightBtn.className = "arrow-btn";
+      rightBtn.textContent = "→";
+      rightBtn.title = `Переместить "${box}" вправо`;
+      rightBtn.disabled = i === selectedBoxes.length - 1;
+      rightBtn.onclick = () => moveBox(i, "right");
+
+      arrowsDiv.appendChild(leftBtn);
+      arrowsDiv.appendChild(rightBtn);
+
+      div.appendChild(arrowsDiv);
+      selectedBoxesDiv.appendChild(div);
+    });
+  }
+
+  // Функция для перестановки выбранных частей речи
+  function moveBox(index, direction) {
+    if (direction === "left" && index > 0) {
+      [selectedBoxes[index - 1], selectedBoxes[index]] = [selectedBoxes[index], selectedBoxes[index - 1]];
+    } else if (direction === "right" && index < selectedBoxes.length - 1) {
+      [selectedBoxes[index + 1], selectedBoxes[index]] = [selectedBoxes[index], selectedBoxes[index + 1]];
     }
-  });
+    renderSelectedBoxes();
+  }
+
+  // Включаем или выключаем кнопку создания текста
+  function updateCreateButton() {
+    const isEnabled = selectedBoxes.length > 0;
+    createBtn.disabled = !isEnabled;
+    createBtn.setAttribute("aria-disabled", !isEnabled);
+  }
+
+  // Генерация текста по выбранному порядку частей речи
+  function generateText() {
+    let text = "";
+    selectedBoxes.forEach(pos => {
+      if (punctuation[pos]) {
+        // Добавляем знак препинания к предыдущему слову без пробела перед ним
+        text = text.trimEnd() + punctuation[pos] + " ";
+      } else {
+        const words = dictionary[pos];
+        if (!words || words.length === 0) return;
+        const randWord = words[Math.floor(Math.random() * words.length)];
+        text += randWord + " ";
+      }
+    });
+    outputDiv.textContent = text.trim();
+  }
+
+  // Обработчик кнопки показа/скрытия частей речи
+  toggleBtn.onclick = () => {
+    const isShown = addPanel.style.display === "flex";
+    addPanel.style.display = isShown ? "none" : "flex";
+    toggleBtn.textContent = isShown ? "Показать части речи +" : "Скрыть части речи –";
+    toggleBtn.setAttribute("aria-expanded", String(!isShown));
+  };
+
+  createBtn.onclick = generateText;
+
+  // Инициализация интерфейса
+  renderAddPanel();
+  updateCreateButton();
+
 </script>
 
 </body>
